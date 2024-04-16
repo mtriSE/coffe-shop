@@ -2,6 +2,7 @@ require('dotenv').config({ path: '.env' })
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const database = require('./services/database');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
