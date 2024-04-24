@@ -1,6 +1,6 @@
 const database = require('../database');
 
-exports.findById = async (req, res, next) => {
+async function findById() {
     try {
         await res.status(200).json({ message: `This controller function find user by id ${req.params.id}` })
     } catch (error) {
@@ -8,7 +8,7 @@ exports.findById = async (req, res, next) => {
     }
 }
 
-exports.findAll = async (req, res, next) => {
+async function findAll() {
     try {
         const [data, metadata] = await database.query('select * from data;');
         console.log(data);
@@ -20,7 +20,7 @@ exports.findAll = async (req, res, next) => {
     }
 }
 
-exports.createCustomer = async (req, res, next) => {
+async function createCustomer() {
     try {
         const body = req.body;
         console.log(body);
@@ -30,12 +30,19 @@ exports.createCustomer = async (req, res, next) => {
     }
 }
 
-exports.updateCustomer = async (req, res, next) => {
+async function updateCustomer() {
     try {
         console.log('this function update customer');
         res.status(200).json(req.body);
     } catch (error) {
         throw Error(error);
     }
-    
+
+}
+
+module.exports = {
+    findAll,
+    findById,
+    createCustomer,
+    updateCustomer
 }
