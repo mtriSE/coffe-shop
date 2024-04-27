@@ -11,15 +11,25 @@ router.get('/', (req, res) => {
 
     }
 });
+router.post('/create', (req, res) => {
+    try {
+        const res =  controller.createCustomer();
+        res.status(200).json({
+            message: 'Get all',
+            status: 200,
+            data: res
+        })
+    } catch (error) {
+        res.sendStatus(500)
+    }
+});
+router.put('/update/:id', (req, res) => {
+    req.params.id
+    controller.updateCustomer();
+});
 
 router.get('/:id', (req, res) => {
     controller.findById();
-});
-router.post('/create', (req, res) => {
-    controller.createCustomer();
-});
-router.put('/update/:id', (req, res) => {
-    controller.updateCustomer();
 });
 
 

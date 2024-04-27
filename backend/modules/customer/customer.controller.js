@@ -14,6 +14,12 @@ async function findAll() {
         console.log(data);
         console.log('------');
         console.log(metadata);
+
+// 
+
+
+// return 
+
         await res.status(200).json({ message: `This controller function find all user ` })
     } catch (error) {
         throw Error(error);
