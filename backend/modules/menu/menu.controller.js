@@ -1,5 +1,6 @@
 const database = require('../database');
 const errors = require('../../utils/errors');
+const { generateId } = require('../../utils/index');
 
 async function findAll() {
     try {
@@ -23,7 +24,8 @@ async function createAnItemAtBranch(branchId, newItem) {
         }
         const Bmgr_CCCD = CCCDs[0].Bmgr_CCCD;
 
-        const { Item, Item_ID, Cost, Item_photo } = newItem;
+        const { Item, Cost, Item_photo } = newItem;
+        const Item_ID = await generateId(4);
 
         const sqlCreateItem = 'insert into menuvalue (?, ?, ?, ?, ?)';
         await database.query(sqlCreateItem, [Bmgr_CCCD, Item, Item_ID, parseInt(Cost), Item_photo]);

@@ -10,7 +10,6 @@ exports.hashPassword = async (password) => {
 
 exports.generateId = async (length) => {
     const test = await uuid4().toString().slice(0, length);
-    console.log(test);
     return test;
 }
 

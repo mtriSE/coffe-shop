@@ -11,6 +11,7 @@ exports.findAll = async () => {
     }
 }
 
+// chua xong
 exports.createOneStaff = async (branchId, body) => {
     try {
         const { Staff_CCCD, ...otherData } = body;
