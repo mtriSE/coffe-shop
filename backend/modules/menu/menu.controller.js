@@ -30,7 +30,7 @@ async function createAnItemAtBranch(branchId, newItem) {
         const sqlCreateItem = 'insert into menuvalue (?, ?, ?, ?, ?)';
         await database.query(sqlCreateItem, [Bmgr_CCCD, Item, Item_ID, parseInt(Cost), Item_photo]);
 
-        return await _findAnItemInMenu(Item_ID);
+        return await findAnItemInMenu(Item_ID);
 
     } catch (error) {
         throw new errors.InternalServerError();
@@ -77,7 +77,7 @@ async function _findAllAvailableBranches() {
     }
 }
 
-async function _findAnItemInMenu(Item_ID) {
+async function findAnItemInMenu(Item_ID) {
     try {
         const sqlFindAnItem = 'select * from menu where Item_ID = ?';
         const [items, _] = await database.query(sqlFindAnItem, [Item_ID]);
@@ -88,9 +88,11 @@ async function _findAnItemInMenu(Item_ID) {
     }
 }
 
+
 module.exports = {
     findAll,
     findAllOfBranch,
     updateAnItem,
-    createAnItemAtBranch
+    createAnItemAtBranch,
+    findAnItemInMenu
 }
