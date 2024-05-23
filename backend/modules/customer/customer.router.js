@@ -23,7 +23,7 @@ router.put('/update/:customerId', async (req, res) => {
     }
 });
 
-router.delete('delete/:customerId', async (req, res) => {
+router.delete('/delete/:customerId', async (req, res) => {
     try {
         const deletedCustomer = await controller.deleteCustomer(req.params.customerId);
         sendSusccessResponse(res, 200, 'success deleted', {});
