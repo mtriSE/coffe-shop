@@ -1,54 +1,64 @@
+const { handleErrorResponse, updateRecordWithVariableFields, deleteRecordFromTable } = require('../../utils');
 const database = require('../database');
 
-async function findById() {
+async function findById(Customer_CCCD) {
     try {
-        await res.status(200).json({ message: `This controller function find user by id ${req.params.id}` })
+        return await database.query(`SELECT * FROM customer WHERE Customer_CCCD = ?`, [Customer_CCCD])
+            .then(([result, fields]) => result)
+            .then(users => {
+                if (users.length > 0) {
+                    return users[0];
+                } else {
+                    console.log(false);
+                    return null;
+                }
+            })
     } catch (error) {
-        throw Error(error);
+        handleErrorResponse(res, 500, error);
     }
 }
 
 async function findAll() {
     try {
-        const [data, metadata] = await database.query('select * from data;');
-        console.log(data);
-        console.log('------');
-        console.log(metadata);
-
-// 
-
-
-// return 
-
-        await res.status(200).json({ message: `This controller function find all user ` })
+        return await database.query('select * from customer;')
+            .then(([result, field]) => result)
+            .catch(error => {
+                throw error;
+            });
+            
     } catch (error) {
-        throw Error(error);
+        throw error;
     }
 }
 
-async function createCustomer() {
+async function updateCustomer(customerId, bodyUpdate) {
     try {
-        const body = req.body;
-        console.log(body);
-        res.status(200).json(body);
+        return await updateRecordWithVariableFields({
+            tableName: 'customer',
+            identifiedColumns: ['Customer_CCCD'],
+            recordIdentifications: [customerId],
+            bodyUpdate: bodyUpdate
+        })
     } catch (error) {
-        throw Error(error);
+        throw error;
     }
 }
 
-async function updateCustomer() {
+async function deleteCustomer(Customer_CCCD) {
     try {
-        console.log('this function update customer');
-        res.status(200).json(req.body);
+        return await deleteRecordFromTable({
+            tableName: 'customer',
+            identifiedColumns: ['Customer_CCCD'],
+            recordIdentifications: Customer_CCCD
+        })
     } catch (error) {
-        throw Error(error);
+        throw error;
     }
-
 }
 
 module.exports = {
     findAll,
     findById,
-    createCustomer,
-    updateCustomer
+    updateCustomer,
+    deleteCustomer
 }
