@@ -14,75 +14,42 @@ router.get('/', async (req, res) => {
 });
 
 // create a new room for a branch with branchId
-router.post('/createRoom/:branchId', async (req, res) => {
+router.post('/createRoom', async (req, res) => {
     try {
-        const { rooms, fields } = await controller.createRoom(req.params.branchId, req.body);
-        res.status(200).json({
-            statusCode: 200,
-            message: 'Room created',
-            data: { rooms: rooms, fields: fields }
-        });
+        const room = await controller.createRoom(req.body);
+        if (room) {
+            sendSusccessResponse(res, 201, 'Room created', room);
+        } else {
+            sendSusccessResponse(res, 304, 'Room not created', room);
+        }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            statusCode: 500,
-            message: error
-        });
+        handleErrorResponse(res, 500, error)
     }
 });
 
 // delete a roow of a branch with branchId and roomId
-router.delete('/deleteRoom/:branchId/:roomId', async (req, res) => {
+router.delete('/deleteRoom/:roomId', async (req, res) => {
     try {
-        const { rooms, fields } = await controller.deleteRoom(req.params.branchId, req.params.roomId);
-        res.status(200).json({
-            statusCode: 200,
-            message: 'Room deleted successfully',
-            data: { rooms: rooms, fields: fields }
-        })
+        const data = await controller.deleteRoom(req.params.roomId);
+        if (data.status) {
+            sendSusccessResponse(res, 200, data.message, data);
+        } else {
+            sendSusccessResponse(res, 420, data.message, data);
+        }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            statusCode: 500,
-            message: error
-        });
+        handleErrorResponse(res, 500, error)
     }
 });
 
 // update a room for a branch with branchId and roomId
-router.put('/updateRoom/:branchId/:roomId', async (req, res) => {
+router.put('/updateRoom/:roomId', async (req, res) => {
     try {
-        const { rooms, fields } = await controller.updateRoom(req.params.branchId, req.params.roomId, req.body);
-        res.status(200).json({
-            statusCode: 200,
-            message: 'Room updated successfully',
-            data: { rooms: rooms, fields: fields }
-        })
+        const updatedRoom = await controller.updateRoom(req.params.roomId, req.body);
+        sendSusccessResponse(res, 201, 'Room updated successfully', updatedRoom);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            statusCode: 500,
-            message: error
-        });
+        handleErrorResponse(res, 500, error);
     }
 });
 
-// get all rooms of branch with branchId
-router.get('/:branchId', async (req, res) => {
-    try {
-        const rooms = await controller.getAllRoomOfBranch(req.params.branchId);
-        res.status(200).json({
-            statusCode: 200,
-            message: 'Get all rooms of branch with branch',
-            data: rooms
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            statusCode: 500,
-            message: error
-        });
-    }
-});
 
 module.exports = router;
