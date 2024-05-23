@@ -11,20 +11,6 @@ exports.findAll = async () => {
     }
 }
 
-// chua xong
-exports.createOneStaff = async (branchId, body) => {
-    try {
-        const { Staff_CCCD, ...otherData } = body;
-        return {
-            branchId,
-            Staff_CCCD,
-            otherData
-        }
-    } catch (error) {
-        throw error;
-    }
-}
-
 exports.deleteStaff = async (staffId) => {
     try {
         return await deleteRecordFromTable({

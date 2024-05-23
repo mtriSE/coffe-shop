@@ -18,17 +18,6 @@ router.get('/', async (req, res) => {
     }
 })
 
-/**
- * @description: Register a new staff's account and create a new record in staff table
-*/
-router.post('/createStaff/:branchId', async (req, res) => {
-    try {
-        const newStaff = await controller.createOneStaff(req.params.branchId, req.body);
-        sendSusccessResponse(res, 200, 'Created staff', newStaff)
-    } catch (error) {
-        handleErrorResponse(res, 500, error);
-    }
-})
 
 // delete a staff
 router.delete('/deleteStaff/:staffId', async (req, res) => {
