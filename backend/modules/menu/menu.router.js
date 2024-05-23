@@ -1,36 +1,26 @@
 const express = require('express');;
 const router = express.Router();
 const controller = require('./menu.controller');
+const { sendSusccessResponse, handleErrorResponse } = require('../../utils');
 
 
 // find all menu items of all branches
 router.get('/', async (req, res) => {
     try {
         const result = await controller.findAll();
-        res.status(200).json({
-            status: 200,
-            message: `Get all menu items`,
-            data: result
-        });
+        sendSusccessResponse(res, 200,  `Get all menu items`, result)
     } catch (error) {
-        res.status(500).json({
-            status: 500,
-            message: error
-        });
+        handleErrorResponse(res, 500, error)
     }
 });
 
 // create an item in the menu of branch with id
-router.post('/create/:branchId', async (req, res) => {
+router.post('/create', async (req, res) => {
     try {
-        const result = await controller.createAnItemAtBranch(req.params.branchId, req.body);
-        res.status(200).json({
-            message: `Created an item at branch ${req.params.branchId} with Item_ID:`,
-            status: 200,
-            data: result
-        });
+        const result = await controller.createAnItem(req.body);
+        sendSusccessResponse(res, 200, `Created an item at branch with Item_ID: ${result.Item_ID}`, result)
     } catch (error) {
-        res.status(500)
+        handleErrorResponse(res, 500, error)
     }
 });
 
@@ -38,33 +28,23 @@ router.post('/create/:branchId', async (req, res) => {
 router.put('/update/:itemId', async (req, res) => {
     try {
         const itemAfterUpdate = await controller.updateAnItem(req.params.itemId, req.body);
-        res.status(200).json({
-            message: `Updated item with id ${req.params.id}`,
-            status: 200,
-            data: itemAfterUpdate
-        });
+        sendSusccessResponse(res, 200, `Updated item with id ${req.params.itemId}`, itemAfterUpdate )
     } catch (error) {
-        res.status(500).json({
-            message: error.sqlMessage,
-            status: 500
-        });
+        handleErrorResponse(res, 500, error)
     }
 });
 
-
-// find items of the branch with the given branch's id
-router.get('/:branchId', async (req, res) => {
+router.delete('/delete/:itemId', async (req, res) => {
     try {
-        const items = await controller.findAllOfBranch(req.params.branchId);
-        res.status(200).json({
-            message: `Get all items from branch with id: ${req.params.branchId}`,
-            status: 200,
-            data: items
-        });
+        const data = await controller.deleteAnItem(req.params.itemId);
+        if (data.status) {
+            sendSusccessResponse(res, 200, data.message, data);
+        } else {
+            sendSusccessResponse(res, 420, data.message, data);
+        }
     } catch (error) {
-        res.sendStatus(500);
+        handleErrorResponse(res, 500, error)
     }
 });
-
 
 module.exports = router;
