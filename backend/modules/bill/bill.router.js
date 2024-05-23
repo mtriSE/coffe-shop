@@ -7,7 +7,7 @@ const { verifyToken } = require('../../middlewares/authorization');
 // get all bills 
 router.get('/history', async (req, res) => {
     try {
-        const bills = await controller.findAllBills();
+        const bills = await controller.findBills();
         sendSusccessResponse(res, 200, 'Get all bills', bills);
     } catch (error) {
         handleErrorResponse(res, 500, error);
@@ -24,6 +24,16 @@ router.post('/createBill', verifyToken, async (req, res) => {
         sendSusccessResponse(res, 200, 'test', control);
     } catch (error) {
         handleErrorResponse(res, 500, error)
+    }
+})
+
+router.get('/', verifyToken, async (req, res) => {
+    try {
+        const { User_ID } = res.locals.decoded;
+        const bills = await controller.findBills(User_ID);
+        sendSusccessResponse(res, 200, 'View my bills', bills);
+    } catch (error) {
+        handleErrorResponse(res, 500, error);
     }
 })
 

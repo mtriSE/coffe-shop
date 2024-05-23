@@ -2,9 +2,9 @@ const db = require('../database');
 const { generateId, createARecord } = require('../../utils/index');
 const { findAnItemInMenu } = require('../menu/menu.controller');
 
-exports.findAllBills = async () => {
+exports.findBills = async (userId) => {
     try {
-        const bills = await db.query(`SELECT * FROM bill;`)
+        const bills = await db.query(userId ? `SELECT * FROM bill WHERE Customer_CCCD = '${userId}';` : `SELECT * FROM bill;`)
             .then(([results, _]) => results)
             .then(bills => {
                 return Promise.all(bills.map(bill => {
