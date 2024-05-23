@@ -4,36 +4,28 @@ const { generateId } = require('../../utils/index');
 
 async function findAll() {
     try {
-        const sql = 'select * from meu;'
+        const sql = 'select * from menu;'
         const [result, _] = await database.query(sql);
         return result;
     } catch (error) {
-        throw new errors.InternalServerError();
+        throw error;
     }
 }
 
 
-async function createAnItemAtBranch(branchId, newItem) {
+async function createAnItem(newItem) {
     try {
 
-        const firstSqlFindCCCD = 'select Bmgr_CCCD from branch where Br_ID = ?';
-        const [CCCDs, _] = await database.query(firstSqlFindCCCD, [branchId]);
-
-        if (CCCDs.length === 0) {
-            throw new errors.NotFound('Not found branch with id: ' + branchId);
-        }
-        const Bmgr_CCCD = CCCDs[0].Bmgr_CCCD;
-
         const { Item, Cost, Item_photo } = newItem;
-        const Item_ID = await generateId(4);
+        const Item_ID = await generateId(3);
 
-        const sqlCreateItem = 'insert into menuvalue (?, ?, ?, ?, ?)';
-        await database.query(sqlCreateItem, [Bmgr_CCCD, Item, Item_ID, parseInt(Cost), Item_photo]);
+        const sqlCreateItem = 'insert into menu value (?, ?, ?, ?)';
+        await database.query(sqlCreateItem, [Item, Item_ID, parseInt(Cost), Item_photo]);
 
         return await findAnItemInMenu(Item_ID);
 
     } catch (error) {
-        throw new errors.InternalServerError();
+        throw error;
     }
 }
 
@@ -42,40 +34,13 @@ async function updateAnItem(itemId, item) {
         const { Item, Cost, Item_photo } = item;
         const sql = 'update menu set Item = ?, Cost = ?, Item_photo = ? where Item_ID = ?';
         const result = await database.query(sql, [Item, parseInt(Cost), Item_photo, itemId]);
-        return result;
+        return await database.query(`SELECT * FROM menu WHERE Item_ID = ?`, [itemId]).then(([result, field]) => result[0]);
     } catch (error) {
-        throw new errors.InternalServerError();
+        throw error;
     }
 }
 
-async function findAllOfBranch(branchId) {
-    try {
-        const availableBranch = (await _findAllAvailableBranches()).map(branch => branch.Br_ID);
-        if (availableBranch.includes(branchId)) {
-            const sql = `select 
-                    menu.Item, menu.Item_ID, menu.Cost, menu.Item_photo 
-                    from menu join br_manager on menu.Bmgr_CCCD = br_manager.Bmgr_CCCD join branch on br_manager.Bmgr_CCCD = branch.Bmgr_CCCD 
-                    where branch.Br_ID = ?;`
-            const [result, _] = await database.query(sql, [branchId]);
-            return result;
-        } else {
-            throw new errors.NotFound('Not found branch with id ' + branchId);
-        }
-    } catch (error) {
-        throw new errors.InternalServerError();
-    }
-}
 
-async function _findAllAvailableBranches() {
-    try {
-        const sqlToFindAllBranchId = `select Br_ID from branch where Status = 'A'`;
-        const [result, _] = await database.query(sqlToFindAllBranchId);
-        return result;
-    } catch (error) {
-        console.error(error);
-        throw new errors.InternalServerError();
-    }
-}
 
 async function findAnItemInMenu(Item_ID) {
     try {
@@ -84,15 +49,38 @@ async function findAnItemInMenu(Item_ID) {
         return items[0];
     } catch (error) {
         console.error(error);
-        throw new errors.InternalServerError();
+        throw error;
     }
 }
 
 
+async function deleteAnItem(itemId) {
+    try {
+        return await database.query(`DELETE FROM menu WHERE Item_ID = ?`, [itemId])
+            .then(([result, field]) => {
+                if (result.affectedRows > 0) {
+                    return {
+                        status: true,
+                        message: `Successfully removed item ${itemId}`
+                    }
+                } 
+                return {
+                    status: false,
+                    message: `Failed to remove item ${itemId}`
+                }
+            })
+            .catch(error => {
+                throw error;
+            })
+    } catch (error) {
+        throw error
+    }
+}
+
 module.exports = {
     findAll,
-    findAllOfBranch,
     updateAnItem,
-    createAnItemAtBranch,
-    findAnItemInMenu
+    createAnItem,
+    findAnItemInMenu,
+    deleteAnItem
 }
