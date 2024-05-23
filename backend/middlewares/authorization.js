@@ -10,9 +10,7 @@ exports.verifyToken = function (req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-        req.payload = decoded;
-
+        res.locals.decoded = decoded;
         next();
     } catch (error) {
         console.error(error);
