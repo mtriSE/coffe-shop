@@ -63,8 +63,8 @@ exports.register = async function register(req, res) {
     const { Fname, Lname, Phone, Email } = userInfo;
     try {
 
-        const foundUserWithCCCD = await userController.findById(User_ID);
-        if (foundUserWithCCCD) {
+        const user = await userController.findById(User_ID);
+        if (user) {
             return res.status(409).json({
                 statusCode: 409,
                 message: `Tồn tại người dùng có CCCD ${User_ID} trong hệ thống`
@@ -74,8 +74,8 @@ exports.register = async function register(req, res) {
         const sqlInsertAccount = 'INSERT INTO account(`User_ID`, `Password`, `Username`, `Role`, `Avatar`) VALUE (?, ?, ?, ?, ?);';
         const sqlInsertCustomer = 'INSERT INTO customer(`Customer_CCCD`,`Fname`,`Lname`,`Phone`,`Email`) VALUE (?, ?, ?, ?, ?);';
 
+        await database.query(sqlInsertAccount, [User_ID, await hashPassword(Password), Username, Role, Avatar]);
         const [accountsInserted, _] = await database.query(sqlInsertCustomer, [User_ID, Fname, Lname, Phone, Email]);
-        await database.query(sqlInsertAccount, [User_ID, Password, Username, Role, Avatar]);
 
         if (accountsInserted.affectedRows > 0) {
             return res.status(201).json({
