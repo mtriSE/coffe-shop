@@ -2,6 +2,7 @@ const express = require('express');;
 const router = express.Router();
 const controller = require('./bill.controller');
 const { handleErrorResponse, sendSusccessResponse } = require('../../utils');
+const { verifyToken } = require('../../middlewares/authorization');
 
 // get all bills 
 router.get('/history', async (req, res) => {
@@ -14,14 +15,17 @@ router.get('/history', async (req, res) => {
 })
 
 // 
-router.post('/createBill', async (req, res) => {
+router.post('/createBill', verifyToken, async (req, res) => {
     try {
-        const { customer_CCCD, roomId, itemsPurchased, total } = req.body;
-        await controller.createOneBill({ itemsPurchased, roomId, total });
-        sendSusccessResponse(res, 200, 'test', { itemsPurchased, roomId, total });
+        const { User_ID } = res.locals.decoded;
+        const { roomId, itemsPurchased, total, Bmgr_CCCD } = req.body;
+        const control = await controller.createOneBill({ customer_CCCD: User_ID, itemsPurchased, roomId, total, Bmgr_CCCD });
+        // sendSusccessResponse(res, 200, 'test', { itemsPurchased, roomId, total });
+        sendSusccessResponse(res, 200, 'test', control);
     } catch (error) {
         handleErrorResponse(res, 500, error)
     }
 })
+
 
 module.exports = router;
