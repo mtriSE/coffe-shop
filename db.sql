@@ -149,7 +149,7 @@ CREATE TABLE BRANCH (
   Bmgr_CCCD VARCHAR(12),
   Br_email VARCHAR(100),
   Br_phone VARCHAR(10),
-  Status CHAR CHECK (Status = 'A' OR Status = 'U' OR Status = 'R'), -- Available, Unavailable, Repair
+  Status CHAR CHECK (Status = 'A' OR Status = 'U' OR Status = 'R') CHECK (Status = 'A' OR Status = 'U' OR Status = 'R'), -- Available, Unavailable, Repair
   PRIMARY KEY (Br_ID)
 );
 
@@ -239,8 +239,8 @@ CREATE TABLE MENU (
 -- Alter table BILL
 --
 
-ALTER TABLE BILL 
-  AUTO_INCREMENT = 1;
+-- ALTER TABLE BILL 
+--   AUTO_INCREMENT = 1;
 
 ALTER TABLE BILL 
   ADD CONSTRAINT fk_bill_customer FOREIGN KEY (Customer_CCCD) REFERENCES CUSTOMER(Customer_CCCD)
@@ -275,8 +275,8 @@ ALTER TABLE BILL
 -- Alter table DETAIL
 --
 
-ALTER TABLE DETAIL 
-  AUTO_INCREMENT = 1;
+-- ALTER TABLE DETAIL 
+--   AUTO_INCREMENT = 1;
 
 ALTER TABLE DETAIL 
   ADD CONSTRAINT fk_detail_bill FOREIGN KEY (Bill_ID) REFERENCES BILL(Bill_ID)
@@ -365,6 +365,15 @@ ALTER TABLE CUSTOMER
 --   ADD CONSTRAINT fk_barista_shift FOREIGN KEY (Shift_name) REFERENCES SHIFT(Shift_name)
 --     ON UPDATE RESTRICT
 --     ON DELETE RESTRICT;
+
+--
+-- Alter table MANAGER
+--
+
+ALTER TABLE MANAGER 
+  ADD CONSTRAINT fk_Mgr_acc FOREIGN KEY (Mgr_CCCD) REFERENCES ACCOUNT(User_ID)
+    ON UPDATE RESTRICT
+    ON DELETE RESTRICT;
 
 --
 -- Alter table BR_MANAGER
@@ -577,17 +586,17 @@ VALUES
 
 INSERT INTO BR_ADDRESS(Br_ID, Br_address, Br_photo)
 VALUES
-('1', '21, Đông Hoà, Dĩ An, Bình Dương', '');
+('1', '21, Đông Hoà, Dĩ An, Bình Dương', 'https://file.hstatic.net/200000648353/article/the-coffee-house_b81b7fd25cde481eae6ddb90521abeca.jpg');
 -- ('2', '31 Ung Văn Khiêm, Phường 25, Quận Bình Thạnh, TP. Hồ Chí Minh', ''),
 -- ('3', '268 Lý Thường Kiệt, Phường 14, Quận 10, TP. Hồ Chí Minh', ''),
 -- ('4', '395 Kinh Dương Vương, Phường An Lạc, Quận Bình Tân, TP. Hồ Chí Minh', '');
 
 INSERT INTO ROOM_TYPE(Room_type_ID, Room_type_name, Max_customer, Cost, Board, TV, Room_photo)
 VALUES
-('0', 'Không', 0, 0, 0, 0, ''),
-('1', 'Đơn', 1, 15000, 0, 0, ''),
-('2', 'Nhỏ', 6, 60000, 1, 0, ''),
-('3', 'Lớn', 15, 120000, 1, 1, '');
+('0', 'Không', 0, 0, 0, 0, 'https://20sfvn.com/wp-content/uploads/2023/04/thi-cong-quan-cafe.jpeg'),
+('1', 'Đơn', 1, 15000, 0, 0, 'https://bluecoffeeinbed.com/wp-content/uploads/elementor/thumbs/Untitled-design-12-pfiq62gpjw411ywo89lon6jasyieazhcpj8v5nkx94.png'),
+('2', 'Nhỏ', 6, 60000, 1, 0, 'https://cozyspace.com.vn/mediacenter/media/3214/images/z4545834963158_c8208a93caebc7943f1a8e002696ce07.jpg'),
+('3', 'Lớn', 15, 120000, 1, 1, 'https://govi.vn/wp-content/uploads/2022/03/vi-tri-dat-phong-hop-quan-trong-nhu-the-nao.png');
 
 INSERT INTO ROOM(Room_ID, Status, Br_ID, Room_type_ID)
 VALUES
@@ -633,14 +642,14 @@ VALUES
 
 INSERT INTO MENU(Item, Item_ID, Cost, Item_photo)
 VALUES
-('cơm', '101', 20000, ''),
-('mì', '102', 15000, ''),
-('chip', '103', 10000, ''),
-('fishball', '104', 10000, ''),
-('cafe', '105', 10000, ''),
-('milktea', '106', 15000, ''),
-('water', '107', 5000, ''),
-('sting', '108', 10000, '');
+('cơm', '101', 20000, 'https://cdn.eva.vn/upload/3-2023/images/2023-07-28/com-chien-hai-san-ngon-hap-dan-cach-lam-don-gian-nhat-5-1690517403-179-width605height416.jpg'),
+('mì', '102', 15000, 'https://cdn.eva.vn/upload/2-2023/images/2023-06-30/5-cach-lam-mi-xao-trung-thom-ngon-don-gian-tai-nha-cuc-nhanh-image4-1625200175-173-width600height406-1688093268-955-width600height406.jpg'),
+('chip', '103', 10000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOuKY6by44QKIxTRzxzw5vYSVBzs0YUsmwAtTYDor4pg&s'),
+('fishball', '104', 10000, 'https://i0.wp.com/iankewks.com/wp-content/uploads/2022/11/IMG_2415.jpg?resize=550%2C700&ssl=1'),
+('cafe', '105', 10000, 'https://bizweb.dktcdn.net/100/339/225/files/ly-cafe-sua-sai-gon.jpg?v=1620293271743'),
+('milktea', '106', 15000, 'https://mms.img.susercontent.com/vn-11134513-7r98o-lsv7gs7sfoas29@resize_ss1242x600!@crop_w1242_h600_cT'),
+('water', '107', 5000, 'https://baothuwater.com/wp-content/uploads/nuoc-suoi-aquafina-350ml.jpg'),
+('sting', '108', 10000, 'https://minhcaumart.vn/media/com_eshop/products/8934588233074.webp');
 
 -- INSERT INTO MENU(Bmgr_CCCD, Item, Item_ID, Cost, Item_photo)
 -- VALUES
@@ -700,10 +709,10 @@ VALUES
 -- ('083203001725', '2022-01-01', '2025-01-01', '4'),
 -- ('095201002824', '2022-01-01', '2025-01-01', '4');
 
-INSERT INTO BILL(Total, Bmgr_CCCD, Customer_CCCD, Room_ID)
+INSERT INTO BILL(Bill_ID, Total, Bmgr_CCCD, Customer_CCCD, Room_ID)
 VALUES
-(10000, '095201002828', '083203001513', '1100'),
-(50000, '095201002828', '095201002519', '1101');
+(1, 10000, '095201002828', '083203001513', '1100'),
+(2, 50000, '095201002828', '095201002519', '1101');
 
 INSERT INTO DETAIL(Bill_ID, Amount, Item_ID)
 VALUES
